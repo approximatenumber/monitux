@@ -15,6 +15,25 @@ log_file = "bot.log"
 
 logging.basicConfig(level = logging.WARNING,filename=log_file,format='%(asctime)s:%(levelname)s - %(message)s')
 
+def start(bot, update):
+    message = update.message
+    chat_id = message.chat.id
+    if chat_id == ADMIN_ID:
+        text = 'Commands: \n' \
+               '/get_cpuload - display current processor loading \n' \
+               '/get_proclist - list all processes \n' \
+               '/grep_proc <procname1> <procname2>... - search for processname in proclist \n' \
+               '/make_top_screenshot - get screenshot of "top" utility \n' \
+               '/get_mem_stat - get RAM statistic'
+        bot.sendMessage(chat_id=ADMIN_ID, text=text)
+
+
+def get_mem_stat(bot, update):
+    message = update.message
+    chat_id = message.chat.id
+    text = '%s' % monitux.get_mem_stat()
+    bot.sendMessage(chat_id=chat_id, text=text)
+
 
 def get_cpuload(bot, update):
     message = update.message
@@ -30,42 +49,29 @@ def get_proclist(bot, update):
     bot.sendMessage(chat_id=chat_id, text=text)
 
 
-def grep_proc(bot, update, procname):
+def get_top_screenshot(bot, update):
     message = update.message
     chat_id = message.chat.id
-    if monitux.grep_proc(procname) is True:
-        text = '%s запущен' % procname
-        bot.sendMessage(chat_id=chat_id, text=text)
-    elif monitux.grep_proc(procname) is False:
-        text = '%s не запущен' % procname
-        bot.sendMessage(chat_id=chat_id, text=text)
+    screenshot = monitux.get_top_screenshot()
+    bot.sendDocument(chat_id=chat_id, document=open(screenshot, 'rb'))
 
-"""
-def main(**args):
-    try:
-        update_id = bot.getUpdates()[0].update_id
-    except IndexError:
-        update_id = None
 
-    while True:
-        try:
-            update_id = echo(bot, update_id)
-        except telegram.TelegramError as e:
-            # These are network problems with Telegram.
-            if e.message in ("Bad Gateway", "Timed out"):
-                sleep(1)
-            elif e.message == "Unauthorized":
-                # The user has removed or blocked the bot.
-                update_id += 1
-            else:
-                raise e
-        except URLError as e:
-            # These are network problems on our end.
-            sleep(1)
+def get_ifconfig_screenshot(bot, update):
+    message = update.message
+    chat_id = message.chat.id
+    screenshot = monitux.get_ifconfig_screenshot()
+    bot.sendDocument(chat_id=chat_id, document=open(screenshot, 'rb'))
 
-if __name__ == '__main__':
-    main()
-"""
+
+def grep_proc(bot, update, args):
+    message = update.message
+    chat_id = message.chat.id
+    for procname in args:
+        if procname in monitux.grep_proc(procname):
+            text = '%s запущен' % procname
+        else:
+            text = '%s не запущен' % procname
+    bot.sendMessage(chat_id=chat_id, text=text)
 
 
 def main(**args):
@@ -75,8 +81,14 @@ def main(**args):
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
+    dp.addTelegramCommandHandler("start", start)
     dp.addTelegramCommandHandler("get_cpuload", get_cpuload)
+    dp.addTelegramCommandHandler("get_mem_stat", get_mem_stat)
     dp.addTelegramCommandHandler("get_proclist", get_proclist)
+    dp.addTelegramCommandHandler("grep_proc", grep_proc)
+    dp.addTelegramCommandHandler("get_top_screenshot", get_top_screenshot)
+    dp.addTelegramCommandHandler("get_ifconfig_screenshot", get_ifconfig_screenshot)
+    dp.addTelegramCommandHandler("get_free_screenshot", get_free_screenshot)
 
 #    dp.addErrorHandler(error)
 
