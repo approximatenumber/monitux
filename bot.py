@@ -35,6 +35,12 @@ def get_mem_stat(bot, update):
     bot.sendMessage(chat_id=chat_id, text=text)
 
 
+def get_temp(bot, update):
+    message = update.message
+    chat_id = message.chat.id
+    text = 'Temperature: %s' % monitux.get_temp()
+    bot.sendMessage(chat_id=chat_id, text=text)
+
 def get_cpuload(bot, update):
     message = update.message
     chat_id = message.chat.id
@@ -54,6 +60,13 @@ def get_top_screenshot(bot, update):
     chat_id = message.chat.id
     screenshot = monitux.get_top_screenshot()
     bot.sendDocument(chat_id=chat_id, document=open(screenshot, 'rb'))
+
+
+def get_disk_stat(bot, update):
+    message = update.message
+    chat_id = message.chat.id
+    text = '%s' % monitux.get_disk_stat()
+    bot.sendMessage(chat_id=chat_id, text=text)
 
 
 def get_ifconfig_screenshot(bot, update):
@@ -84,30 +97,17 @@ def main(**args):
     dp.addTelegramCommandHandler("start", start)
     dp.addTelegramCommandHandler("get_cpuload", get_cpuload)
     dp.addTelegramCommandHandler("get_mem_stat", get_mem_stat)
+    dp.addTelegramCommandHandler("get_disk_stat", get_disk_stat)
     dp.addTelegramCommandHandler("get_proclist", get_proclist)
     dp.addTelegramCommandHandler("grep_proc", grep_proc)
     dp.addTelegramCommandHandler("get_top_screenshot", get_top_screenshot)
     dp.addTelegramCommandHandler("get_ifconfig_screenshot", get_ifconfig_screenshot)
-    dp.addTelegramCommandHandler("get_free_screenshot", get_free_screenshot)
+    dp.addTelegramCommandHandler("get_temp", get_temp)
 
 #    dp.addErrorHandler(error)
 
     # Start the Bot and store the update Queue, so we can insert updates
     update_queue = updater.start_polling(poll_interval=1, timeout=5)
-
-    # Start CLI-Loop
-    while True:
-        text = input()
-
-        # Gracefully stop the event handler
-        if text == 'stop':
-            updater.stop()
-            break
-
-        # else, put the text into the update queue
-        elif len(text) > 0:
-            update_queue.put(text)  # Put command into queue
-
 
 if __name__ == '__main__':
     main()

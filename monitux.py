@@ -3,6 +3,7 @@
 import psutil
 from more_itertools import unique_everseen
 import subprocess
+import tempfile
 
 
 def get_cpuload(interval): return psutil.cpu_percent(interval)
@@ -13,9 +14,30 @@ def get_mem_stat():
     # convert Bytes to GB
     mem_all = round(mem[0]/10**9, 1)
     mem_free = round(mem[1]/10**9, 1)
-    mem_used = mem_all - mem_free
+    mem_used = round(mem_all - mem_free, 1)
     mem_stat = 'Used: %s Gb, Free: %s Gb, Total: %s Gb' % (mem_used, mem_free, mem_all)
     return mem_stat
+
+
+def get_disk_stat():
+    disk_stat = []
+    for dev in (psutil.disk_partitions()):
+        disk_stat.append('%s (%s): Free: %s Gb, Used: %s Gb, Total: %s Gb' % (dev[0], dev[1], \
+                                                                            # convert Bytes to GB and round
+                                                                            round(int(psutil.disk_usage(dev[1])[2])/10**9, 1), \
+                                                                            round(int(psutil.disk_usage(dev[1])[0])/10**9, 1), \
+                                                                            round(int(psutil.disk_usage(dev[1])[1])/10**9, 1)))
+    return '\n'.join(disk_stat)
+
+
+def get_temp():
+    acpitemp_file = '/sys/class/thermal/thermal_zone0/temp'
+    if psutil.os.path.isfile(acpitemp_file) is True:
+        temperature = open(acpitemp_file, 'r').read()
+        # convert thousands of degrees Celcius to degrees
+        return int(temperature)/1000
+    else:
+        return '%s not found!' % acpitemp_file
 
 
 def get_proclist():
