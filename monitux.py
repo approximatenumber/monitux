@@ -25,8 +25,8 @@ def get_disk_stat():
         disk_stat.append('%s (%s): Free: %s Gb, Used: %s Gb, Total: %s Gb' % (dev[0], dev[1], \
                                                                             # convert Bytes to GB and round
                                                                             round(int(psutil.disk_usage(dev[1])[2])/10**9, 1), \
-                                                                            round(int(psutil.disk_usage(dev[1])[0])/10**9, 1), \
-                                                                            round(int(psutil.disk_usage(dev[1])[1])/10**9, 1)))
+                                                                            round(int(psutil.disk_usage(dev[1])[1])/10**9, 1), \
+                                                                            round(int(psutil.disk_usage(dev[1])[0])/10**9, 1)))
     return '\n'.join(disk_stat)
 
 
