@@ -4,6 +4,7 @@ import psutil
 from more_itertools import unique_everseen
 import subprocess
 import tempfile
+import time
 
 
 def get_cpuload(interval): return psutil.cpu_percent(interval)
@@ -29,7 +30,14 @@ def get_disk_stat():
         used = round(int(psutil.disk_usage(device[1])[1])/10**9, 1)
         free = round(total - used, 1)
         disk_stat.append([partition, mounted, total, used, free])
-    return disk_stat
+    return sorted(disk_stat)
+
+
+def get_uptime():
+    boot_time = psutil.boot_time()
+    cur_time = time.time()
+    uptime = time.gmtime(cur_time - boot_time)
+    return uptime
 
 
 def get_temp():

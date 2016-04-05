@@ -39,20 +39,31 @@ def get_mem_stat(bot, update):
 def get_temp(bot, update):
     message = update.message
     chat_id = message.chat.id
-    text = 'Temperature: %s' % monitux.get_temp()
+    text = 'temperature: %s' % monitux.get_temp()
     bot.sendMessage(chat_id=chat_id, text=text)
+
 
 def get_cpuload(bot, update):
     message = update.message
     chat_id = message.chat.id
-    text = 'Загрузка процессора: %s' % monitux.get_cpuload(interval=0) # "interval" need to be developed
+    text = 'Processor loading: %s %%' % monitux.get_cpuload(interval=0) # "interval" need to be developed
     bot.sendMessage(chat_id=chat_id, text=text)
 
+
+def get_uptime(bot, update):
+    message = update.message
+    chat_id = message.chat.id
+    uptime = monitux.get_uptime()
+    days = uptime.tm_mday - 1 # "time" module return +1
+    hours = uptime.tm_hour
+    mins = uptime.tm_min
+    text = 'uptime: %s days, %s hours, %s minutes' % (days, hours, mins)
+    bot.sendMessage(chat_id=chat_id, text=text)
 
 def get_proclist(bot, update):
     message = update.message
     chat_id = message.chat.id
-    text = 'Список процессов:\n%s' % monitux.get_proclist()
+    text = 'process list:\n%s' % monitux.get_proclist()
     bot.sendMessage(chat_id=chat_id, text=text)
 
 
@@ -73,7 +84,6 @@ def get_disk_stat(bot, update):
     bot.sendMessage(chat_id=chat_id, text='\n'.join(text))
 
 
-
 def get_ifconfig_screenshot(bot, update):
     message = update.message
     chat_id = message.chat.id
@@ -86,9 +96,9 @@ def grep_proc(bot, update, args):
     chat_id = message.chat.id
     for procname in args:
         if procname in monitux.grep_proc(procname):
-            text = '%s запущен' % procname
+            text = '%s is running' % procname
         else:
-            text = '%s не запущен' % procname
+            text = '%s is not running' % procname
     bot.sendMessage(chat_id=chat_id, text=text)
 
 
@@ -108,6 +118,7 @@ def main(**args):
     dp.addTelegramCommandHandler("get_top_screenshot", get_top_screenshot)
     dp.addTelegramCommandHandler("get_ifconfig_screenshot", get_ifconfig_screenshot)
     dp.addTelegramCommandHandler("get_temp", get_temp)
+    dp.addTelegramCommandHandler("get_uptime", get_uptime)
 
 #    dp.addErrorHandler(error)
 
