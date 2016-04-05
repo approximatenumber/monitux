@@ -31,7 +31,8 @@ def start(bot, update):
 def get_mem_stat(bot, update):
     message = update.message
     chat_id = message.chat.id
-    text = '%s' % monitux.get_mem_stat()
+    mem_stat = monitux.get_mem_stat()
+    text = 'total: %s Gb, used: %s Gb, free %s Gb' % (mem_stat[0], mem_stat[1], mem_stat[2])
     bot.sendMessage(chat_id=chat_id, text=text)
 
 
@@ -65,8 +66,12 @@ def get_top_screenshot(bot, update):
 def get_disk_stat(bot, update):
     message = update.message
     chat_id = message.chat.id
-    text = '%s' % monitux.get_disk_stat()
-    bot.sendMessage(chat_id=chat_id, text=text)
+    text = []
+    for dev in monitux.get_disk_stat():
+        text.append(("%s on %s: total %s Gb, used %s Gb, free %s Gb" % \
+                     (dev[0],dev[1], dev[2], dev[3], dev[4])))
+    bot.sendMessage(chat_id=chat_id, text='\n'.join(text))
+
 
 
 def get_ifconfig_screenshot(bot, update):

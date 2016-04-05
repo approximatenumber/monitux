@@ -12,22 +12,24 @@ def get_cpuload(interval): return psutil.cpu_percent(interval)
 def get_mem_stat():
     mem = list(psutil.virtual_memory())
     # convert Bytes to GB
-    mem_all = round(mem[0]/10**9, 1)
-    mem_free = round(mem[1]/10**9, 1)
-    mem_used = round(mem_all - mem_free, 1)
-    mem_stat = 'Used: %s Gb, Free: %s Gb, Total: %s Gb' % (mem_used, mem_free, mem_all)
+    total = round(mem[0]/10**9, 1)
+    free = round(mem[1]/10**9, 1)
+    used = round(total - free, 1)
+    mem_stat = [total, used, free]
     return mem_stat
 
 
 def get_disk_stat():
     disk_stat = []
-    for dev in (psutil.disk_partitions()):
-        disk_stat.append('%s (%s): Free: %s Gb, Used: %s Gb, Total: %s Gb' % (dev[0], dev[1], \
-                                                                            # convert Bytes to GB and round
-                                                                            round(int(psutil.disk_usage(dev[1])[2])/10**9, 1), \
-                                                                            round(int(psutil.disk_usage(dev[1])[1])/10**9, 1), \
-                                                                            round(int(psutil.disk_usage(dev[1])[0])/10**9, 1)))
-    return '\n'.join(disk_stat)
+    for device in (psutil.disk_partitions()):
+        partition = device[0]
+        mounted = device[1]
+        # convert bytes to Gb
+        total = round(int(psutil.disk_usage(device[1])[0])/10**9, 1)
+        used = round(int(psutil.disk_usage(device[1])[1])/10**9, 1)
+        free = round(total - used, 1)
+        disk_stat.append([partition, mounted, total, used, free])
+    return disk_stat
 
 
 def get_temp():
@@ -63,8 +65,7 @@ def get_top_screenshot():
         top.wait()
         return top_path
     except Exception as e:
-        print(e)
-        return False
+        return 'can`t '
 
 
 def get_ifconfig_screenshot():
