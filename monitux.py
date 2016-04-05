@@ -73,7 +73,7 @@ def get_top_screenshot():
         top.wait()
         return top_path
     except Exception as e:
-        return 'can`t '
+        return 'error %s' % e
 
 
 def get_ifconfig_screenshot():
@@ -85,4 +85,4 @@ def get_ifconfig_screenshot():
         return ifconfig_path
     except Exception as e:
         print(e)
-        return False
+        return 'error %s' % e
