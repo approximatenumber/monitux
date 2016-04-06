@@ -24,7 +24,8 @@ def start(bot, update):
                '/get_proclist - list all processes \n' \
                '/grep_proc <procname1> <procname2>... - search for processname in proclist \n' \
                '/make_top_screenshot - get screenshot of "top" utility \n' \
-               '/get_mem_stat - get RAM statistic'
+               '/get_mem_stat - get RAM statistic \n' \
+               '/get_uptime - get uptime'
         bot.sendMessage(chat_id=ADMIN_ID, text=text)
 
 
