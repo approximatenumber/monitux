@@ -3,11 +3,11 @@
 import psutil
 from more_itertools import unique_everseen
 import subprocess
-import tempfile
 import time
 
 
-def get_cpuload(interval): return psutil.cpu_percent(interval)
+def get_cpuload(interval):
+    return psutil.cpu_percent(interval)
 
 
 def get_mem_stat():
@@ -35,19 +35,19 @@ def get_disk_stat():
 
 def get_uptime():
     boot_time = psutil.boot_time()
-    cur_time = time.time()
-    uptime = time.gmtime(cur_time - boot_time)
+    current_time = time.time()
+    uptime = time.gmtime(current_time - boot_time)
     return uptime
 
 
 def get_temp():
     acpitemp_file = '/sys/class/thermal/thermal_zone0/temp'
-    if psutil.os.path.isfile(acpitemp_file) is True:
+    try:
         temperature = open(acpitemp_file, 'r').read()
         # convert thousands of degrees Celcius to degrees
         return int(temperature)/1000
-    else:
-        return '%s not found!' % acpitemp_file
+    except Exception as e:
+        return 'Can`t detect temperature: %s' % e
 
 
 def get_proclist():
@@ -58,31 +58,9 @@ def get_proclist():
     return '\n'.join(list(unique_everseen(proclist)))
 
 
-def grep_proc(procname):
-    if procname in get_proclist():
-        return procname
-    else:
-        return False
-
-
-def get_top_screenshot():
-    top_path = '/tmp/top_screenshot.png'
-    try:
-        top = subprocess.Popen(['top', '-n1', '-b'], stdout=subprocess.PIPE)
-        subprocess.check_output(['convert','-pointsize', '20', '-font', 'Courier', '-fill', 'black', '-background', 'white', 'label:@-', '%s' % top_path], stdin=top.stdout)
-        top.wait()
-        return top_path
-    except Exception as e:
-        return 'error %s' % e
-
-
-def get_ifconfig_screenshot():
-    ifconfig_path = '/tmp/ifconfig_screenshot.png'
-    try:
-        ifconfig = subprocess.Popen(['ifconfig'], stdout=subprocess.PIPE)
-        subprocess.check_output(['convert','-pointsize', '20', '-font', 'Courier', '-fill', 'black', '-background', 'white', 'label:@-', '%s' % ifconfig_path], stdin=ifconfig.stdout)
-        ifconfig.wait()
-        return ifconfig_path
-    except Exception as e:
-        print(e)
-        return 'error %s' % e
+def make_screenshot(cmd):
+    file = '/tmp/screenshot.png'
+    convert = 'convert -pointsize 20 -font Courier -fill black -background white label:@-'
+    run_cmd = subprocess.Popen("%s | %s %s" % (cmd, convert, file), shell=True)
+    run_cmd.wait()
+    return file
