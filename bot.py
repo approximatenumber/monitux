@@ -109,8 +109,6 @@ def all_stats(bot, update):
      bot.sendMessage(chat_id=ADMIN_ID, text=monitux.get_all_stats())
 
 
-
-
 def error(bot, update, error):
     logging.warning('Update "%s" caused error:\n "%s"' % (update, error))
 
@@ -133,6 +131,7 @@ def main(**args):
     dp.addTelegramCommandHandler("temp", temp)
     dp.addTelegramCommandHandler("uptime", uptime)
     dp.addTelegramCommandHandler("help", _help)
+    dp.addTelegramCommandHandler("all_stats", all_stats)
     dp.addErrorHandler(error)
 
     # Start the Bot and store the update Queue, so we can insert updates
