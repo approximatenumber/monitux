@@ -8,7 +8,7 @@ import logging
 
 try:
     sys.path.append('.private')
-    from private_config import ADMIN_ID, TOKEN
+    from config import ADMIN_ID, TOKEN
 except ImportError:
     print("I need ADMIN_ID, TOKEN from .private/config.py!")
     raise SystemExit
