@@ -106,7 +106,7 @@ def grep_proc(bot, update, args):
     bot.sendMessage(chat_id=ADMIN_ID, text='\n'.join(text))
 
 def all_stats(bot, update):
-    stats = mem_stat(), uptime(), cpuload(), disk_stat(), temp()
+    stats = mem_stat(bot,update), uptime(bot,update), cpuload(bot,update), disk_stat(bot,update), temp(bot,update)
     bot.sendMessage(chat_id=ADMIN_ID, text='\n'.join(stats))
 
 
