@@ -106,7 +106,8 @@ def grep_proc(bot, update, args):
     bot.sendMessage(chat_id=ADMIN_ID, text='\n'.join(text))
 
 def all_stats(bot, update):
-     bot.sendMessage(chat_id=ADMIN_ID, text=monitux.get_all_stats())
+    stats = mem_stat(), uptime(), cpuload(), disk_stat(), temp()
+    bot.sendMessage(chat_id=ADMIN_ID, text='\n'.join(stats))
 
 
 def error(bot, update, error):
