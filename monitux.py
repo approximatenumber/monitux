@@ -58,6 +58,11 @@ def get_proclist():
     return '\n'.join(list(unique_everseen(proclist)))
 
 
+def get_all_stats():
+    stats = get_cpuload(), get_disk_stat(), get_mem_stat(), get_temp(), get_uptime()
+    return stats
+
+
 def make_screenshot(cmd):
     file = '/tmp/screenshot.png'
     convert = 'convert -pointsize 20 -font Courier -fill black -background white label:@-'

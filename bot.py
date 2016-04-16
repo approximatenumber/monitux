@@ -105,6 +105,11 @@ def grep_proc(bot, update, args):
             text.append('%s is not running' % proc)
     bot.sendMessage(chat_id=ADMIN_ID, text='\n'.join(text))
 
+def all_stats(bot, update):
+     bot.sendMessage(chat_id=ADMIN_ID, text=monitux.get_all_stats())
+
+
+
 
 def error(bot, update, error):
     logging.warning('Update "%s" caused error:\n "%s"' % (update, error))
